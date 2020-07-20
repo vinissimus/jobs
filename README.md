@@ -124,7 +124,7 @@ async with db.transaction():
 
 ```bash
 
-pip install jobs
+pip install pgjobs
 jobs-migrate postgresql://user:password@localhost:5432/db
 
 This will create the schema on the `jobs` postgresql schema
@@ -148,10 +148,16 @@ With psql, or exposing them throught postgresql_exporter
 
 ## TODO
 
-- [] connect notifications, using pg_notify, when tasks are queued,
-  are picked, are completed. With this in place, it's easy
-  enought to write o WS to send notifications to connected customers.
+- [ ] connect notifications, using pg_notify, when tasks are queued,
+      are picked, are completed. With this in place, it's easy
+      enought to write o WS to send notifications to connected customers.
 
-- [] improve the worker to run every job on an asyncio task
+- [ ] improve the worker to run every job on an asyncio task
 
-- [] handle better exceptions on the python side
+- [ ] handle better exceptions on the python side
+
+- [ ] fix requirements file
+
+- [ ] add github actions to run CI
+
+- [ ] write better docs and some examples
