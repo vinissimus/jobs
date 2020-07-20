@@ -1,0 +1,13 @@
+**/__pycache__
+env/
+venv/
+.env
+.idea
+.pytest_cache/
+.mypy_cache/
+bin/
+lib/
+lib64
+**/$*.py
+apiadmin.egg-info/
+.vscode/
