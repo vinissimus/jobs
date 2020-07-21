@@ -45,8 +45,16 @@ class Worker:
         self.closing = True
 
 
-async def main(dsn: str):
-    pass
+async def main(dsn: str, num_workers=1, **kwargs):
+    tasks = []
+    for w in range(0, num_workers):
+        worker = Worker(dsn, **kwargs)
+        tasks.append(worker.work())
+    await asyncio.gather(*tasks)
+
+
+def process_run(dsn: str, **kwargs):
+    asyncio.run(main(dsn, **kwargs))
 
 
 usage = """
