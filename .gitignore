@@ -11,3 +11,4 @@ lib64
 **/$*.py
 apiadmin.egg-info/
 .vscode/
+dist/

@@ -9,7 +9,7 @@ except IOError:
 setup(
     name="pgjobs",
     version="0.1.0",
-    description="Postgres job scheduling",
+    description="Postgresql job scheduling",
     long_description=README,
     long_description_content_type="text/markdown",
     author="jordi collell",
@@ -18,8 +18,12 @@ setup(
     package_data={"jobs": ["py.typed"]},
     packages=find_packages(),
     include_package_data=True,
-    extras_require={},
     classifiers=[],
+    install_requires=["asyncpg>=0.20.1,<0.21"],
+    tests_require=["pytest", "pytest-docker-fixtures"],
+    extras_require={
+        "test": ["pytest", "pytest-asyncio", "pytest-cov", "coverage"]
+    },
     entry_points={
         "console_scripts": [
             "jobs-worker = jobs.worker:run",

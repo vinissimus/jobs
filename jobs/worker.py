@@ -1,10 +1,8 @@
 import asyncio
+import asyncpg
+import jobs
 import logging
 import sys
-
-import asyncpg
-
-import jobs
 
 logger = logging.getLogger("jobs")
 

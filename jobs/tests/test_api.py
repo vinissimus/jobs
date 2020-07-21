@@ -142,3 +142,25 @@ async def test_task_priorities(db):
     task = await jobs.publish(db, "atask", priority=10)
     [t2] = await jobs.consume(db, 1)
     assert task["job_id"] == t2["job_id"]
+
+
+async def test_consume_topics(db):
+    t1 = await jobs.publish(db, "task.new.1")
+    t2 = await jobs.publish(db, "task.old.3")
+    tasks = await jobs.consume_topic(db, "task.%", 2)
+    assert len(tasks) == 2
+
+    r1 = {t["job_id"] for t in tasks}
+    r2 = {t1["job_id"], t2["job_id"]}
+
+    assert r1 == r2
+
+    await jobs.ack(db, tasks[0]["job_id"])
+    await jobs.ack(db, tasks[1]["job_id"])
+
+    await jobs.publish(db, "task.new.1.x")
+    no_tasks = await jobs.consume_topic(db, "xxxx")
+    assert len(no_tasks) == 0
+
+    t3 = await jobs.consume_topic(db, "task.new.%")
+    assert len(t3) == 1

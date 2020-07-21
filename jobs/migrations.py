@@ -4,8 +4,8 @@ import asyncio
 import asyncpg
 import glob
 import logging
-import typing
 import sys
+import typing
 
 logger = logging.getLogger("jobs")
 

@@ -26,6 +26,8 @@ create table jobs.job_queue (
     scheduled_at timestamp
 );
 
+CREATE index idx_task_name ON jobs.job_queue(task);
+
 alter table jobs.job_queue
     add constraint unique_jobqueue_job_id
     unique(job_id);
@@ -318,3 +320,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+create or replace function jobs.consume(topic varchar, num integer)
+    RETURNS SETOF jobs.job_queue as $$
+BEGIN
+    PERFORM jobs.clean_timeout();
+    RETURN QUERY WITH tasks AS (
+        SELECT *
+            from jobs.job_queue
+        WHERE
+            (scheduled_at <= clock_timestamp() OR scheduled_at IS NULL)
+            AND run_at is NULL
+            AND task like topic
+        ORDER BY priority desc NULLS LAST
+        FOR UPDATE SKIP LOCKED
+        limit num
+    ), update AS (
+        UPDATE
+            jobs.job_queue
+        SET
+            run_at=now()
+        WHERE id IN (select id from tasks)
+    ) SELECT * from jobs.job_queue WHERE id IN (
+        SELECT id FROM tasks
+    );
+END;
+$$ LANGUAGE plpgsql;

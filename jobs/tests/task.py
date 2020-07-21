@@ -1,7 +1,7 @@
 # some tasks to do tests
 
-import asyncpg
 import asyncio
+import asyncpg
 
 
 async def task(num, num2):

@@ -1,8 +1,8 @@
 from jobs.migrations import migrate
 from pytest_docker_fixtures import images
 
-import asyncpg
 import asyncio
+import asyncpg
 import pytest
 
 images.configure("postgresql", "postgres", "11.1")
