@@ -9,12 +9,12 @@ with a python asyncio/asyncpg api
 
 - Implements a two layer API:
 
-A postgresql layer: tasks can be published from PL/PGSQL functions,
-or procedures. Also can be extended using triggers.
+    A postgresql layer: tasks can be published from PL/PGSQL functions, 
+    or procedures. Also can be extended using triggers.
 
-A python layer (or any client with a postgresql driver). The default
-implementations is based on asyncio python, using the awesome
-asyncpg driver.
+    A python layer (or any client with a postgresql driver). The default
+    implementations is based on asyncio python, using the awesome
+    asyncpg driver.
 
 - It's compatible with postgrest. All procedures, and tables, are scoped
   on an owned postgresql schema, and can be exposed throught it, with postgrest
@@ -39,13 +39,26 @@ asyncpg driver.
 - Tasks could also be priorized, provide a priority number, greater priority,
   precedence over other tasks
 
+- consumer_topic, allows to consume tasks with a * (*topic.element.%*)
+
+- rudimentary benchs on my laptop showed that it can handle 1000 tasks/second, 
+  but anyway it depends on your postgres instance.
+
+- instead of a worker daemon, tasks could also be consumed from a cronjob, or
+a regular python or a kubernetes job. (It could be used to parallelize k8 jobs)
+
+## tradeofs
+
+- All jobs had to be aknowledged positive or negative (ack/nack)
+- 
+
 ## Use from postgresql
 
 ```sql
 SELECT job_id FROM
     jobs.publish(
         i_task -- method or function to be executed,
-        i_arguments::jsonb = null -- arguments passed to it (on python {args:[], kwargs:{}}),
+        i_body::jsonb = null -- arguments passed to it (on python {args:[], kwargs:{}}),
         i_scheduled_at: timestamp = null, -- when the task should run
         i_timeout:numeric(7,2) -- timeout in seconds for the job
         i_priority:integer = null -- gretare number more priority
@@ -59,8 +72,15 @@ SELECT * from jobs.consume(
     num: integer -- number of desired jobs
 );
 ```
+returns a list of jobs to be processed, 
 
-returns a list of jobs to be processed, jobs are marked as processing,
+Or selective consume a topic:
+
+```sql
+SELECT * from jobs.consume_topic('topic.xxx.%', 10)
+```
+
+jobs are marked as processing,
 and should be acnlowledged with:
 
 ```sql
@@ -84,7 +104,7 @@ where jobs.bulk_job is
 ```sql
 create type jobs.bulk_job as (
     task varchar,
-    arguments jsonb,
+    body jsonb,
     scheduled_at timestamp,
     timeout integer,
     priority integer,
@@ -156,7 +176,7 @@ With psql, or exposing them throught postgresql_exporter
 
 - [ ] handle better exceptions on the python side
 
-- [ ] fix requirements file
+- [x] fix requirements file
 
 - [ ] add github actions to run CI
 
