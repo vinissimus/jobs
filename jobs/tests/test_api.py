@@ -21,6 +21,7 @@ async def test_jobs_basic_operations(db):
     assert await count(db, "jobs.job_queue") == 1
     tasks = await jobs.consume(db, 1)
     assert len(tasks) == 1
+    assert tasks[0]["run_at"] is not None
     assert tasks[0]["task"] == task["task"]
     assert tasks[0]["job_id"] == task["job_id"]
 

@@ -22,7 +22,7 @@ setup(
     install_requires=["asyncpg>=0.20.1,<0.21"],
     tests_require=["pytest", "pytest-docker-fixtures"],
     extras_require={
-        "test": ["pytest", "pytest-asyncio", "pytest-cov", "coverage"]
+        "test": ["pytest", "pytest-asyncio", "pytest-cov", "pytest-docker-fixtures[pg]", "coverage"]
     },
     entry_points={
         "console_scripts": [

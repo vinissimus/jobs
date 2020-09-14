@@ -46,6 +46,8 @@ async def db_conn(event_loop, db_settings):
 @pytest.fixture()
 async def db(db_conn):
     txn = db_conn.transaction()
-    await txn.start()
-    yield db_conn
-    await txn.rollback()
+    try:
+        await txn.start()
+        yield db_conn
+    finally:
+        await txn.rollback()
