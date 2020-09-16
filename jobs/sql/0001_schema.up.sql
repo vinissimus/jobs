@@ -300,7 +300,7 @@ create or replace function jobs.consume(num integer)
 BEGIN
     PERFORM jobs.clean_timeout();
     RETURN QUERY WITH tasks AS (
-        SELECT *
+        SELECT id
             from jobs.job_queue
         WHERE
             (scheduled_at <= clock_timestamp() OR scheduled_at IS NULL)
@@ -326,7 +326,7 @@ create or replace function jobs.consume(topic varchar, num integer)
 BEGIN
     PERFORM jobs.clean_timeout();
     RETURN QUERY WITH tasks AS (
-        SELECT *
+        SELECT id
             from jobs.job_queue
         WHERE
             (scheduled_at <= clock_timestamp() OR scheduled_at IS NULL)
