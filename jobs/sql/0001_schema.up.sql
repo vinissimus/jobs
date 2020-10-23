@@ -308,15 +308,12 @@ BEGIN
         ORDER BY priority desc NULLS LAST
         FOR UPDATE SKIP LOCKED
         limit num
-    ), update AS (
-        UPDATE
-            jobs.job_queue
-        SET
-            run_at=now()
-        WHERE id IN (select id from tasks)
-    ) SELECT * from jobs.job_queue WHERE id IN (
-        SELECT id FROM tasks
-    );
+    )
+    UPDATE
+        jobs.job_queue
+    SET
+        run_at=now()
+    WHERE id IN (select id from tasks) RETURNING *;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -326,7 +323,7 @@ create or replace function jobs.consume(topic varchar, num integer)
 BEGIN
     PERFORM jobs.clean_timeout();
     RETURN QUERY WITH tasks AS (
-        SELECT *
+        SELECT id
             from jobs.job_queue
         WHERE
             (scheduled_at <= clock_timestamp() OR scheduled_at IS NULL)

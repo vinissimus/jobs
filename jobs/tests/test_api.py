@@ -22,6 +22,7 @@ async def test_jobs_basic_operations(db):
     tasks = await jobs.consume(db, 1)
     assert len(tasks) == 1
     assert tasks[0]["task"] == task["task"]
+    assert tasks[0]["run_at"] is not None
     assert tasks[0]["job_id"] == task["job_id"]
 
     finished = await jobs.ack(db, task["job_id"])

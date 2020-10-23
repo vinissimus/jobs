@@ -67,8 +67,8 @@ def run():
     if len(sys.argv) != 2:
         print(usage)
         sys.exit(1)
-
-    asyncio.run(main())
+    dsn = sys.argv[1]
+    asyncio.run(main(dsn))
 
 
 if __name__ == "__main__":

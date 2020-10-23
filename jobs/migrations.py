@@ -1,3 +1,4 @@
+from .utils import setup_stdout_logging
 from pathlib import Path
 
 import asyncio
@@ -57,7 +58,7 @@ async def migrate(db: asyncpg.Connection = None):
 
 
 async def main(dsn: str):
-    db = await asyncpg.connection(dsn=dsn)
+    db = await asyncpg.connect(dsn=dsn)
     await migrate(db)
 
 
@@ -71,8 +72,9 @@ def run():
     if len(sys.argv) != 2:
         print(usage)
         sys.exit(1)
-
-    asyncio.run(main())
+    setup_stdout_logging()
+    dsn = sys.argv[1]
+    asyncio.run(main(dsn))
 
 
 if __name__ == "__main__":
